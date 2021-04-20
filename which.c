@@ -28,7 +28,7 @@ char *searchCmd(char *cmd) {
         return NULL;
     }
 
-    char* pathdir = strtok(path, ":");
+    char *pathdir = strtok(path, ":");
 
     // Go through each directory in PATH
     while (pathdir != NULL) {
