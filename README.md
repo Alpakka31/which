@@ -3,7 +3,7 @@
   
 ## Compiling and installing  
   To compile run:
-  - `gcc which.c -o which`
+  - `make`
   
   To install run:
-  - `install -m755 which /usr/local/bin/which`
+  - `make install`
