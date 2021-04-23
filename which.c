@@ -35,7 +35,7 @@ char *searchCmd(char *cmd) {
         char *buf = malloc(BUF_LEN * sizeof(char));
         if (buf == NULL) {
             printf("Memory allocation failed\n");
-            exit 1;
+            exit(1);
         }
 
         // Construct command path to search for
