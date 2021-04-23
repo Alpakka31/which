@@ -33,6 +33,10 @@ char *searchCmd(char *cmd) {
     // Go through each directory in PATH
     while (pathdir != NULL) {
         char *buf = malloc(BUF_LEN * sizeof(char));
+        if (buf == NULL) {
+            printf("Memory allocation failed\n");
+            exit 1;
+        }
 
         // Construct command path to search for
         snprintf(buf, BUF_LEN * sizeof(char), "%s/%s", pathdir, cmd);
