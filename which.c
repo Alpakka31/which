@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
     } else {
         if ((path = getenv("PATH")) == NULL) {
             puts("$PATH not found");
+            exit(1);
         }
 
         bool all_findings = false;
