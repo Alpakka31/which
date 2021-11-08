@@ -74,7 +74,7 @@ void usage(void) {
 }
 
 int main(int argc, char *argv[]) {
-    char *path;
+    char *path = NULL;
     int ret = 0;
 
     if (argc < 2) {
