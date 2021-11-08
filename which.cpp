@@ -71,7 +71,6 @@ int main(int argc, char **argv) {
             std::cout << "$PATH not found" << std::endl;
             std::exit(1);
         }
-        std::string path_str(path);
 
         bool all_findings = false;
         for (int i = 1; i < argc; i++) {
@@ -88,7 +87,7 @@ int main(int argc, char **argv) {
             if (arg == "-a") {
                 continue;
             }
-            ret = search_cmd(arg, path_str, all_findings);
+            ret = search_cmd(arg, std::string(path), all_findings);
         }
     }
     
