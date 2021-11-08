@@ -35,18 +35,10 @@ int search_cmd(std::string cmd, std::string path, bool find_all) {
             missed = 0;
         }
     } else {
-        #ifdef _WIN32
-            std::vector<std::string> dirs = split_str(path, ";");
-        #else
-            std::vector<std::string> dirs = split_str(path, ":");
-        #endif
+        std::vector<std::string> dirs = split_str(path, ":");
 
         for (auto & dir : dirs) {
-            #ifdef _WIN32
-                std::string command = dir + "\\" + cmd;
-            #else
-                std::string command = dir + "/" + cmd;
-            #endif
+            std::string command = dir + "/" + cmd;
             if (is_cmd_exec(command) == 0) {
                 if (find_all == false) {
                     std::cout << command << std::endl;
