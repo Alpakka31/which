@@ -16,7 +16,7 @@ int is_cmd_exec(const char *cmd) {
     }
 }
 
-int search_cmd(char *cmd, char *path, bool search_all) {
+int search_cmd(char *cmd, char *path, bool find_all) {
     int missed = 1;
 
     // Don't use $PATH if the command contains a slash
@@ -46,7 +46,7 @@ int search_cmd(char *cmd, char *path, bool search_all) {
             if (is_cmd_exec(command) == 0) {
 
             	// Show only 1 finding
-            	if (search_all == false) {
+            	if (find_all == false) {
                     puts(command);
                     free(command);
 
