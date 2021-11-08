@@ -1,100 +1,105 @@
-/*
- * Author: Alpakka31
- * Description: Search for the path of a given command from PATH and return it.
- * License: MIT
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <errno.h>
+#include <sys/stat.h>
 
-#define BUF_LEN 128
+#define BUF_LEN 512 * sizeof(char)
 
-/*
- * searchCmd
- * ---------
- *  Searches the given command from PATH
- *  environment variable.
- *
- *  cmd: the command to search for
- *
- *  returns: path to the given command if found
- *           otherwise NULL
- *
- */
-char *searchCmd(char *cmd) {
-    char *path = getenv("PATH");
-    if (path == NULL) {
-        printf("PATH wasn't found\n");
-        return NULL;
+int is_cmd_exec(const char *cmd) {
+    struct stat buf;
+    if (stat(cmd, &buf) == 0 && buf.st_mode & S_IXUSR) {
+        return 0;
+    } else {
+        return 1;
     }
-
-    char *pathdir = strtok(path, ":");
-
-    // Go through each directory in PATH
-    while (pathdir != NULL) {
-        char *buf = malloc(BUF_LEN * sizeof(char));
-        if (buf == NULL) {
-            printf("Memory allocation failed\n");
-            exit(1);
-        }
-
-        // Construct command path to search for
-        snprintf(buf, BUF_LEN * sizeof(char), "%s/%s", pathdir, cmd);
-        buf[BUF_LEN * sizeof(char) - 1] = '\0';
-
-        int exists = 0;
-
-        // Check if the command exists
-        FILE *file = fopen(buf, "r");
-        if (file != NULL) {
-            fclose(file);
-            exists = 1;
-        } else {
-            exists = 0;
-        }
-
-        // Return the command path if it was found
-        if (exists == 1) {
-            return buf;
-        }
-
-        // Go to the next directory
-        pathdir = strtok(NULL, ":");
-
-        free(buf);
-    }
-
-    return NULL;
 }
 
-/*
- * usage
- * ---------
- *  Tells how to use the program
- *
- *  returns: nothing
- *
- */
+int search_cmd(char *cmd, char *path, bool search_all) {
+	int missed = 1;
+
+    // Don't use $PATH if the command contains a slash
+    if (strchr(cmd, '/')) {
+        if (is_cmd_exec(cmd) == 0) {
+            puts(cmd);
+            missed = 0;
+        }
+    } else {
+        char *temp = strdup(path);
+        char *dir = strtok(temp, ":");
+
+        // Go through each directory in PATH
+        while (dir != NULL) {
+            char *command = malloc(BUF_LEN);
+            if (!command) {
+            	free(temp);
+                perror("malloc");
+                exit(1);
+            }
+            memset(command, 0, BUF_LEN);
+
+            // Construct command path to check
+            snprintf(command, BUF_LEN, "%s/%s", dir, cmd);
+
+            // Check if the command exists and is executable
+            if (is_cmd_exec(command) == 0) {
+
+            	// Show only 1 finding
+            	if (search_all == false) {
+            		puts(command);
+            		free(command);
+
+					missed = 0;
+            		break;
+            	} else { // Show all findings
+            		puts(command);
+            		missed = 0;
+            	}
+            }
+
+            // Search the next directory for the command
+            dir = strtok(NULL, ":");
+            free(command);
+        }
+        free(temp);
+    }
+
+    return missed;
+}
+
+
 void usage(void) {
-    printf("Usage: which <command>\n");
+    puts("usage: which cmd... [-a]");
 }
 
 int main(int argc, char *argv[]) {
+    char *path;
+	int ret = 0;
+
     if (argc < 2) {
         usage();
-    } else if (argc > 2) {
-        printf("Too many arguments. Only one expected.\n");
-        return 1;
     } else {
-        char *res = searchCmd(argv[1]);
-        if (res == NULL) {
-            printf("which: command '%s' not found in PATH\n", argv[1]);
-            return 1;
+        if ((path = getenv("PATH")) == NULL) {
+            puts("$PATH not found");
         }
-        printf("%s\n", res);
 
-        free(res);
+		bool all_findings = false;
+        for (int i = 1; i < argc; i++) {
+        	if (all_findings == false) {
+        		for (int j = i; j < argc; j++) {
+		    		if (strncmp(argv[j], "-a", strlen(argv[j])) == 0) {
+		    			all_findings = true;
+		    		}
+		    	}
+        	}
+
+        	if (strncmp(argv[i], "-a", strlen(argv[i])) == 0) {
+        		continue;
+        	}
+        	ret = search_cmd(argv[i], path, all_findings);
+        }
     }
 
-    return 0;
+    return ret;
 }
