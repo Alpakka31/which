@@ -17,7 +17,7 @@ int is_cmd_exec(const char *cmd) {
 }
 
 int search_cmd(char *cmd, char *path, bool search_all) {
-	int missed = 1;
+    int missed = 1;
 
     // Don't use $PATH if the command contains a slash
     if (strchr(cmd, '/')) {
@@ -47,14 +47,14 @@ int search_cmd(char *cmd, char *path, bool search_all) {
 
             	// Show only 1 finding
             	if (search_all == false) {
-            		puts(command);
-            		free(command);
+                    puts(command);
+                    free(command);
 
-					missed = 0;
-            		break;
+                    missed = 0;
+                    break;
             	} else { // Show all findings
-            		puts(command);
-            		missed = 0;
+                    puts(command);
+                    missed = 0;
             	}
             }
 
@@ -75,7 +75,7 @@ void usage(void) {
 
 int main(int argc, char *argv[]) {
     char *path;
-	int ret = 0;
+    int ret = 0;
 
     if (argc < 2) {
         usage();
@@ -84,20 +84,20 @@ int main(int argc, char *argv[]) {
             puts("$PATH not found");
         }
 
-		bool all_findings = false;
+        bool all_findings = false;
         for (int i = 1; i < argc; i++) {
-        	if (all_findings == false) {
-        		for (int j = i; j < argc; j++) {
-		    		if (strncmp(argv[j], "-a", strlen(argv[j])) == 0) {
-		    			all_findings = true;
-		    		}
-		    	}
-        	}
+            if (all_findings == false) {
+                for (int j = i; j < argc; j++) {
+                    if (strncmp(argv[j], "-a", strlen(argv[j])) == 0) {
+                        all_findings = true;
+                    }
+                }
+            }
 
-        	if (strncmp(argv[i], "-a", strlen(argv[i])) == 0) {
-        		continue;
-        	}
-        	ret = search_cmd(argv[i], path, all_findings);
+            if (strncmp(argv[i], "-a", strlen(argv[i])) == 0) {
+                continue;
+            }
+            ret = search_cmd(argv[i], path, all_findings);
         }
     }
 
