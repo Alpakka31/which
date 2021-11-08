@@ -1,8 +1,8 @@
 OBJS = which.o
 CC := gcc
 CFLAGS := -Wall -Wextra -pedantic -Wformat=2 -O2
-PREFIX := /usr
-BINDIR := ${PREFIX}/local/bin
+PREFIX := /usr/local
+BINDIR := ${PREFIX}/bin
 PROGNAME = which
 
 .PHONY: all clean
