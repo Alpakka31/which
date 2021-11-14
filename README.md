@@ -1,5 +1,5 @@
 # which
-  A minimal alternative to the GNU which command found in Linux distributions
+  A minimal alternative to the GNU which command
   
 ## Compiling and installing  
   To compile run:
